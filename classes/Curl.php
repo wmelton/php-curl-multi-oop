@@ -21,7 +21,7 @@ class Curl
 		$this->ch = curl_init();
 		
 		// Rezultāts tiek atgriezts nevis izvadīts
-	curl_setopt ($this->ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt ($this->ch, CURLOPT_RETURNTRANSFER, 1);
 		// Saglabā sūtāmos headerus
 		curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
 //		# TRUE to include the header in the output. 
@@ -37,6 +37,18 @@ class Curl
 //		// The name of a file to save all internal cookies to when the connection closes.
 //		$cookie_jar = str_replace('\\','/',dirname(__FILE__).'/cookies.class.curl.txt');
 //		curl_setopt($this->ch, CURLOPT_COOKIEJAR, $cookie_jar);
+	}
+	
+	/**
+	 *
+	 * @param integer $option Curl constant
+	 * @see http://php.net/manual/en/function.curl-setopt.php
+	 * @param mixed $value 
+	 */
+	public function setopt($option,$value) {
+		
+		curl_setopt ($this->ch, $option, $value);
+		
 	}
 	
 	/**
