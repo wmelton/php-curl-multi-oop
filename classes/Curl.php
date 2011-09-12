@@ -1,132 +1,112 @@
 <?php
+
 /**
- * @TODO Jāizveido iespēja rezultātu uzreiz saglabāt failā uz fopen handle
- * phpcurl wrapped in a class
- * @author Mārtiņš Balodis
+ * php curl functions wrapped in a class
+ * @author   Martins Balodis <martins256@gmail.com>
+ * @category Curl_Base_Class
+ * @package  Curl
+ * @license  http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link     https://github.com/martinsbalodis/php-curl-multi-oop
  */
-class Curl
-{
-	/**	
+class Curl {
+
+	/** 	
 	 * Curl Handle
 	 * @var 
 	 */
 	private $ch;
-	
+
 	/**
-	 * 
+	 * Initializes curl handler
 	 */
-	public function __construct()
-	{
-		// Inicializē Curl handleri
+	public function __construct() {
+		
+		// Initializes Curl handler
 		$this->ch = curl_init();
 		
-		// Rezultāts tiek atgriezts nevis izvadīts
-		curl_setopt ($this->ch, CURLOPT_RETURNTRANSFER, 1);
-		// Saglabā sūtāmos headerus
-		curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
-//		# TRUE to include the header in the output. 
-//		curl_setopt($this->ch, CURLOPT_HEADER, true);
-		// No kādas pārlūkprogrammas it kā atvērta lapa
-		curl_setopt($this->ch, CURLOPT_USERAGENT, "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.9");
-		// Seko redirektiem
-		curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
-		// Redirektu limits
-		curl_setopt($this->ch, CURLOPT_MAXREDIRS, 4);
-		// The contents of the "Accept-Encoding: " header. This enables decoding of the response. Supported encodings are "identity", "deflate", and "gzip". If an empty string, "", is set, a header containing all supported encoding types is sent. 
-		curl_setopt($this->ch, CURLOPT_ENCODING, "");
-//		// The name of a file to save all internal cookies to when the connection closes.
-//		$cookie_jar = str_replace('\\','/',dirname(__FILE__).'/cookies.class.curl.txt');
-//		curl_setopt($this->ch, CURLOPT_COOKIEJAR, $cookie_jar);
+		// Result will be returned not outputed
+		$this->setopt(CURLOPT_RETURNTRANSFER, true);
 	}
-	
+
+	// @TODO Jāizveido iespēja rezultātu uzreiz saglabāt failā uz fopen handle
+
 	/**
-	 *
+	 * Set curl parameter
 	 * @param integer $option Curl constant
 	 * @see http://php.net/manual/en/function.curl-setopt.php
 	 * @param mixed $value 
 	 */
-	public function setopt($option,$value) {
-		
-		curl_setopt ($this->ch, $option, $value);
-		
+	public function setopt($option, $value) {
+
+		curl_setopt($this->ch, $option, $value);
 	}
-	
+
 	/**
-	 * Uzstāda datu sūtīšanas metodi
+	 * Sets data request method
 	 * @param string $method 
 	 */
-	public function set_method($method)
-	{
-		switch($method)
-		{
-			case 'POST' : curl_setopt ($this->ch, CURLOPT_POST, true); break;
-			case 'GET' : curl_setopt ($this->ch, CURLOPT_HTTPGET, TRUE); break;
-			default : throw new Exception('Nederīga metode',1);
+	public function set_method($method) {
+		
+		switch ($method) {
+			case 'POST' : curl_setopt($this->ch, CURLOPT_POST, true);
+				break;
+			case 'GET' : curl_setopt($this->ch, CURLOPT_HTTPGET, TRUE);
+				break;
+			default : throw new Exception('Invalid request method. ' . htmlspecialchars($method), 1);
 		}
 	}
-	
+
 	/**
-	 * Parametri, kas jāpadod kā POST dati
+	 * Set post parameter string.
+	 * Data will be sent as post.
 	 * @param string $post_string 
 	 */
-	public function set_post_string($post_string)
-	{
-		curl_setopt ($this->ch, CURLOPT_POSTFIELDS, $post_string);
+	public function set_post_string($post_string) {
+		
+		$this->setopt(CURLOPT_POSTFIELDS, $post_string);
 	}
-	
+
 	/**
-	 * Uzstāda linku, kuru vajadzēs atvērt
+	 * Set execution url. This can be also set in exec method.
 	 * @param string $url 
 	 */
-	public function set_url($url)
-	{
+	public function set_url($url) {
+		
 		curl_setopt($this->ch, CURLOPT_URL, $url);
 	}
-	
+
 	/**
-	 * Veic pieprasījumu
+	 * Execute request
 	 * @param string $url 
-	 * @param string $set_method 
+	 * @return string
 	 */
-	public function exec($url=false,$set_method = false)
-	{
-		// Uzstāda url, ja tāds ir padots
-		if($url!==false)
-		{
+	public function exec($url = null) {
+		
+		// sets execution url if it is supplied
+		if ($url !== null) {
 			$this->set_url($url);
 		}
-		
-		// Uzstāda izpildes metodi, ja tāda ir padota
-		if($set_method!==false)
-		{
-			$this->set_method($set_method);
-		}
-		
-		// Veic pieprasījumu
+
+		// Executes the request
 		$result = curl_exec($this->ch);
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * Atgriež headerus kādi tika nosūtīti uz serveri
 	 * @return string 
 	 */
-	public function get_headers_sent()
-	{
-		return curl_getinfo($this->ch,CURLINFO_HEADER_OUT);
+	public function get_headers_sent() {
+		
+		return curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
 	}
 	
 	/**
-	 * 
+	 * Returns curl handle.
+	 * @return type 
 	 */
-	public function get_headers_received()
-	{
-		
-	}
-	
-	public function get_handle()
-	{
+	public function get_handle() {
 		return $this->ch;
 	}
 }
