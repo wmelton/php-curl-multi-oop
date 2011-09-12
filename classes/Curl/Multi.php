@@ -1,4 +1,7 @@
 <?php
+/**
+ * @author Mārtiņš Balodis
+ */
 Class Curl_Multi {
 	/**
 	 * Multi Curl Handle
@@ -31,7 +34,7 @@ Class Curl_Multi {
 	public function add_job(Curl_MultiReady $curl) {
 		
 		// Add jobs for execution
-		if(count($jobs) <= $this->handle_limit) {
+		if(count($this->jobs) <= $this->handle_limit) {
 			
 			$this->jobs[] = $curl;
 			curl_multi_add_handle($this->mch, $curl->get_handle());
@@ -64,7 +67,7 @@ Class Curl_Multi {
 			$mrc = curl_multi_exec($this->mch, $active);
 		} while ($mrc == CURLM_CALL_MULTI_PERFORM);
 		
-		if($execrun != CURLM_OK) {
+		if($mrc != CURLM_OK) {
 			throw new Exception('Something went wrong!');
 		}
 		

@@ -1,7 +1,7 @@
 <?php
 /**
  * @TODO Jāizveido iespēja rezultātu uzreiz saglabāt failā uz fopen handle
- * Pieprasījumu klase
+ * phpcurl wrapped in a class
  * @author Mārtiņš Balodis
  */
 class Curl
