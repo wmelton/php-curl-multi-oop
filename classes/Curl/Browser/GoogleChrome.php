@@ -3,7 +3,7 @@
 /**
  * Simulates google chrome browser for requests
  * @author   Martins Balodis <martins256@gmail.com>
- * @category Curl_Base_Class
+ * @category Curl_Browser_Class
  * @package  Curl
  * @license  http://www.opensource.org/licenses/mit-license.php MIT License
  * @link     https://github.com/martinsbalodis/php-curl-multi-oop

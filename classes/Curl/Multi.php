@@ -1,8 +1,15 @@
 <?php
+
 /**
- * @author Mārtiņš Balodis
+ * php multi curl class.
+ * @author   Martins Balodis <martins256@gmail.com>
+ * @category Curl_Base_Class
+ * @package  Curl
+ * @license  http://www.opensource.org/licenses/mit-license.php MIT License
+ * @link     https://github.com/martinsbalodis/php-curl-multi-oop
  */
 Class Curl_Multi {
+	
 	/**
 	 * Multi Curl Handle
 	 * @var resource
@@ -48,7 +55,10 @@ Class Curl_Multi {
 		}
 		
 	}
-
+	
+	/**
+	 * Constructor. Initializes multi curl handle
+	 */
 	public function __construct() {
 			$this->mch = curl_multi_init();
 			curl_multi_select($this->mch);
@@ -106,46 +116,5 @@ Class Curl_Multi {
 				throw new Exception('cURL select failure or timeout.');
 			}
 		}
-
-//		$running=null;
-//
-//
-//
-//
-//		do {
-//			curl_multi_exec($this->mch,$running);
-//			// Apstādina ciklu kamēr kāds cURL uzpildās
-//			$ready=curl_multi_select($this->mch);
-//
-//			if($ready>0)
-//			{
-//				echo $ready;
-//				var_dump(curl_multi_info_read($this->mch));
-//
-////				// Ir izpildījušies pieprasījumi. Šeit tiek iegūti to rezultāti
-////				while($info=curl_multi_info_read($this->mch,$msgs_in_queue))
-////				{
-////					var_dump($info);
-////
-////					// Piemeklē rezultātam
-////					foreach($this->jobs as $key=>$job)
-////					{
-////						/* @var $job Curl */
-////						if($job->get_handle()===$info['handle'])
-////						{
-////							$content = curl_multi_getcontent($info['handle']);
-////							$job->executed($content);
-////							break;
-////						}
-////					}
-////
-//////					$status=curl_getinfo($info['handle'],CURLINFO_HTTP_CODE);
-//////					if($status==200){
-//////						$successUrl=curl_getinfo($info['handle'],CURLINFO_EFFECTIVE_URL);
-//////						break 2;
-//////					}
-////				}
-//			}
-//		} while ($running>0 && $ready!=-1);
 	}
 }
