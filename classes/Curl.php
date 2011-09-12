@@ -14,7 +14,19 @@ class Curl {
 	 * Curl Handle
 	 * @var 
 	 */
-	private $ch;
+	protected $ch;
+	
+	/**
+	 * Fetch received headers
+	 * @var boolean
+	 */
+	protected $fetch_headers = false;
+	
+	/**
+	 * Received headers after execution
+	 * @var string 
+	 */
+	protected $headers_received;
 
 	/**
 	 * Initializes curl handler
@@ -86,9 +98,38 @@ class Curl {
 		if ($url !== null) {
 			$this->set_url($url);
 		}
+		
+		// Received headers must be retrieved
+		if($this->fetch_headers) {
+			
+			// set curl to return headers
+			$this->setopt(CURLOPT_HEADER, true);
+			
+			// Executes the request
+			$result = curl_exec($this->ch);
+			
+			// set curl to NOT return headers
+			$this->setopt(CURLOPT_HEADER, false);
+			
+			// Seperate header from body
+			echo $result;
+			$pos = strpos("\n\n", $result);
+			
+			if($pos === false) {
+				throw new Exception('No headers received!', 2);
+			}
+			
+			$this->headers_received = substr($result, 0, $pos);
+			
+			$result = substr($result, $pos+4, strlen($result)-$pos-4);
+			
+		}
+		else {
+			// Executes the request
+			$result = curl_exec($this->ch);
+		}
 
-		// Executes the request
-		$result = curl_exec($this->ch);
+		
 
 		return $result;
 	}
@@ -100,6 +141,20 @@ class Curl {
 	public function get_headers_sent() {
 		
 		return curl_getinfo($this->ch, CURLINFO_HEADER_OUT);
+	}
+	
+	/**
+	 * Set to fetch received headers.
+	 * This must be set before executing request via exec method
+	 * afterwars use get_headers_received method
+	 */
+	public function set_fetch_headers() {
+		
+		$this->fetch_headers = true;
+	}
+	
+	public function get_headers_receved() {
+		return $this->headers_received;
 	}
 	
 	/**
