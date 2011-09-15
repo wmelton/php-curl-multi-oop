@@ -164,4 +164,16 @@ class Curl {
 	public function get_handle() {
 		return $this->ch;
 	}
+	
+	/**
+	 * File download
+	 * Save results into a file
+	 * @param string $filename 
+	 */
+	public function save_into_file($filename) {
+		
+		$file_handle = fopen($filename,'c+x+');
+		
+		$this->setopt(CURLOPT_FILE, $file_handle);
+	}
 }
